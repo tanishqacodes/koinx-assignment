@@ -36,6 +36,7 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
         const utc_time = new Date(row['UTC_Time']);
         const operation = row['Operation'];
         const market = row['Market'];
+        const [base_coin, quote_coin] = market.split('/');
         const amount = parseFloat(row['Buy/Sell Amount']);
         const price = parseFloat(row['Price']);
 
@@ -44,6 +45,8 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
           utc_time,
           operation,
           market,
+          base_coin,
+          quote_coin,
           amount,
           price
         });

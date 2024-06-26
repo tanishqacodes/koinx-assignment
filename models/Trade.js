@@ -1,29 +1,37 @@
 const mongoose = require('mongoose');
 
 const tradeSchema = new mongoose.Schema({
-    user_id:{
-        type : Number,
-        required :true
+    user_id: {
+        type: Number,
+        required: true
     },
-    utc_time: { 
+    utc_time: {
         type: Date,
-        required: true 
+        required: true
     },
-    operation: { 
+    operation: {
+        type: String,
+        required: true
+    },
+    market: {
+        type: String,
+        required: true
+    },
+    base_coin: { 
         type: String, 
         required: true 
     },
-    market: { 
-        type: String,
+    quote_coin: { 
+        type: String, 
         required: true 
     },
-    amount: { 
-        type: Number, 
-        required: true 
+    amount: {
+        type: Number,
+        required: true
     },
-    price: { 
-        type: Number, 
-        required: true 
+    price: {
+        type: Number,
+        required: true
     }
 });
 
