@@ -5,6 +5,7 @@ const csvParser = require('csv-parser');
 const fs = require('fs');
 const path = require('path');
 const Trade = require('./models/Trade');
+const bodyParser = require('body-parser');
 
 // Initialize Express app
 const app = express();
@@ -72,6 +73,59 @@ app.post('/upload-csv', upload.single('file'), (req, res) => {
       res.status(500).send('Failed to process CSV file');
     });
 });
+
+app.use(bodyParser.json());
+
+// TASK - 2
+app.post('/balance', async (req, res) => {
+  const { timestamp } = req.body;
+  if (!timestamp) {
+    return res.status(400).send('Timestamp is required');
+  }
+
+  let queryTimestamp;
+  try {
+    queryTimestamp = new Date(timestamp);
+    if (isNaN(queryTimestamp)) throw new Error();
+  } catch (err) {
+    return res.status(400).send('Invalid timestamp format');
+  }
+
+  try {
+    // Query trades up to the given timestamp
+    const trades = await Trade.find({ utc_time: { $lte: queryTimestamp } });
+
+    const balances = {};
+
+    trades.forEach(trade => {
+      const { base_coin, amount, operation } = trade;
+      const multiplier = operation.toLowerCase() === 'buy' ? 1 : -1;
+
+      if (!balances[base_coin]) {
+        balances[base_coin] = 0;
+      }
+
+      balances[base_coin] += amount * multiplier;
+    });
+
+    // Filter out assets with zero balance
+    for (const asset in balances) {
+      if (balances[asset] === 0) {
+        delete balances[asset];
+      }
+    }
+    
+    console.log("balances : ",balances);
+
+
+    res.status(200).json(balances);
+  } catch (err) {
+    console.error('Error calculating balances:', err);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {
