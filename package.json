@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.3",
+    "multer": "^1.4.5-lts.1"
+  }
+}
